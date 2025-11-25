@@ -15,6 +15,7 @@ export default async function ParentDashboard() {
     include: {
       students: {
         include: {
+          user: true,
           class: true,
           attendance: {
             take: 10,

@@ -24,7 +24,11 @@ export async function GET(request: NextRequest) {
         },
         teachers: {
           include: {
-            user: true,
+            teacher: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
         subjects: true,

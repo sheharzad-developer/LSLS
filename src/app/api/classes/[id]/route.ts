@@ -31,7 +31,11 @@ export async function GET(
         },
         teachers: {
           include: {
-            user: true,
+            teacher: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
         subjects: {
@@ -99,7 +103,11 @@ export async function PUT(
         },
         teachers: {
           include: {
-            user: true,
+            teacher: {
+              include: {
+                user: true,
+              },
+            },
           },
         },
       },

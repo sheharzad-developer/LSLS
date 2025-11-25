@@ -6,12 +6,13 @@ export default withAuth(
     const token = req.nextauth.token
     const path = req.nextUrl.pathname
     const isAuthPage = path === "/login" || path === "/signup"
+    const isRootPage = path === "/"
     const isApiAuth = path.startsWith("/api/auth")
 
-    // Allow access to login and signup pages and API auth routes
-    if (isAuthPage || isApiAuth) {
-      // If user is already logged in and tries to access auth pages, redirect to their dashboard
-      if (isAuthPage && token) {
+    // Allow access to root page, login and signup pages and API auth routes
+    if (isRootPage || isAuthPage || isApiAuth) {
+      // If user is already logged in and tries to access root or auth pages, redirect to their dashboard
+      if ((isRootPage || isAuthPage) && token) {
         return NextResponse.redirect(
           new URL(`/${token.role?.toLowerCase() || "admin"}`, req.url)
         )
@@ -19,7 +20,7 @@ export default withAuth(
       return NextResponse.next()
     }
 
-    // If no token and not on auth page, redirect to login
+    // If no token and not on root/auth page, redirect to login
     if (!token) {
       const loginUrl = new URL("/login", req.url)
       loginUrl.searchParams.set("callbackUrl", path)
@@ -50,8 +51,8 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        // Allow access to login and signup pages without token
-        if (req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/signup") {
+        // Allow access to root, login and signup pages without token
+        if (req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/signup") {
           return true
         }
         // Require token for all other routes

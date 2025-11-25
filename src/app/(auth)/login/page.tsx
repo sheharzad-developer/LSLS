@@ -21,15 +21,24 @@ export default function LoginPage() {
     setError("")
     setLoading(true)
 
+    // Trim whitespace from email
+    const trimmedEmail = email.trim()
+
+    if (!trimmedEmail || !password) {
+      setError("Please enter both email and password")
+      setLoading(false)
+      return
+    }
+
     try {
       const result = await signIn("credentials", {
-        email,
+        email: trimmedEmail,
         password,
         redirect: false,
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
+        setError("Invalid email or password. Please check your credentials and try again.")
         setLoading(false)
         return
       }
@@ -77,7 +86,7 @@ export default function LoginPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email Address</Label>
               <Input
                 id="email"
                 type="email"
@@ -85,7 +94,9 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
+              <p className="text-xs text-gray-500">Enter your email address (not username)</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>

@@ -15,9 +15,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const data = signupSchema.parse(body)
 
+    // Normalize email to lowercase and trim
+    const normalizedEmail = data.email.trim().toLowerCase()
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email: data.email },
+      where: { email: normalizedEmail },
     })
 
     if (existingUser) {
@@ -35,7 +38,7 @@ export async function POST(request: NextRequest) {
       const user = await prisma.user.create({
         data: {
           name: data.name,
-          email: data.email,
+          email: normalizedEmail,
           password: hashedPassword,
           role: data.role,
           student: {
@@ -56,7 +59,7 @@ export async function POST(request: NextRequest) {
       const user = await prisma.user.create({
         data: {
           name: data.name,
-          email: data.email,
+          email: normalizedEmail,
           password: hashedPassword,
           role: data.role,
           teacher: {
@@ -77,7 +80,7 @@ export async function POST(request: NextRequest) {
       const user = await prisma.user.create({
         data: {
           name: data.name,
-          email: data.email,
+          email: normalizedEmail,
           password: hashedPassword,
           role: data.role,
           parent: {
@@ -98,7 +101,7 @@ export async function POST(request: NextRequest) {
       const user = await prisma.user.create({
         data: {
           name: data.name,
-          email: data.email,
+          email: normalizedEmail,
           password: hashedPassword,
           role: data.role,
         },

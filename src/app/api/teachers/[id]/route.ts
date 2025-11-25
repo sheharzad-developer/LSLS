@@ -14,7 +14,7 @@ const updateTeacherSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -22,8 +22,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const teacher = await prisma.teacher.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: true,
         classes: {
@@ -54,7 +55,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -62,11 +63,12 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const body = await request.json()
     const data = updateTeacherSchema.parse(body)
 
     const teacher = await prisma.teacher.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { user: true },
     })
 
@@ -92,20 +94,20 @@ export async function PUT(
     if (data.classIds) {
       // Delete existing TeacherClass records
       await prisma.teacherClass.deleteMany({
-        where: { teacherId: params.id },
+        where: { teacherId: id },
       })
       
       // Create new TeacherClass records
       await prisma.teacherClass.createMany({
         data: data.classIds.map((classId) => ({
-          teacherId: params.id,
+          teacherId: id,
           classId,
         })),
       })
     }
     
     updatedTeacher = await prisma.teacher.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         user: true,
         classes: {
@@ -131,7 +133,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions)
@@ -139,8 +141,9 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const { id } = await params
     const teacher = await prisma.teacher.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!teacher) {
@@ -148,7 +151,7 @@ export async function DELETE(
     }
 
     await prisma.teacher.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "Teacher deleted successfully" })

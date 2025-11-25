@@ -75,7 +75,7 @@ export default async function TeacherStudentsPage() {
                         {student.user.name}
                       </TableCell>
                       <TableCell>{student.user.email}</TableCell>
-                      <TableCell>{student.class?.name || "Not Assigned"}</TableCell>
+                      <TableCell>{student.classId || "Not Assigned"}</TableCell>
                     </TableRow>
                   ))
                 )}

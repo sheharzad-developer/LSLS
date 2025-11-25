@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, FileText, BookOpen, UserCircle, Users, GraduationCap } from "lucide-react"
 import Link from "next/link"
+import { AttendanceCards } from "@/components/student/attendance-cards"
 
 export default async function StudentDashboard() {
   const session = await getServerSession(authOptions)
@@ -29,6 +30,17 @@ export default async function StudentDashboard() {
   const presentCount = student?.attendance.filter(a => a.status === "PRESENT").length || 0
   const resultsCount = student?.results.length || 0
   const attendanceRate = attendanceCount > 0 ? Math.round((presentCount / attendanceCount) * 100) : 0
+
+  // Check if today's attendance is already marked
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const todayEnd = new Date(today)
+  todayEnd.setHours(23, 59, 59, 999)
+  
+  const todayAttendance = student?.attendance.find(a => {
+    const attendanceDate = new Date(a.date)
+    return attendanceDate >= today && attendanceDate <= todayEnd
+  })
 
   const navigationCards = [
     {
@@ -102,6 +114,14 @@ export default async function StudentDashboard() {
         </h1>
         <p className="text-lg text-gray-600">Welcome back, {session.user.name}</p>
       </div>
+
+      {/* Quick Mark Attendance Cards */}
+      {student && (
+        <AttendanceCards 
+          studentId={student.id} 
+          todayAttendance={todayAttendance ? { id: todayAttendance.id, status: todayAttendance.status } : null}
+        />
+      )}
 
       {/* Quick Stats */}
       <div className="grid gap-4 md:grid-cols-3">

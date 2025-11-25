@@ -105,11 +105,23 @@ export default async function TeacherDashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          Teacher Dashboard
-        </h1>
-        <p className="text-lg text-gray-600">Welcome back, {session.user.name}</p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Teacher Dashboard
+          </h1>
+          <p className="text-lg text-gray-600">Welcome back, {session.user.name}</p>
+        </div>
+        <Link href="/teacher/teachers/new">
+          <Card className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
+                <span className="font-semibold">Add Teachers</span>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Quick Stats */}

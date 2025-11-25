@@ -115,6 +115,16 @@ export default function LandingPage() {
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </div>
+              <div className="text-center text-sm pt-2">
+                <span className="text-gray-600">Don't have an account? </span>
+                <button
+                  type="button"
+                  onClick={() => router.push("/signup")}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign up
+                </button>
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -125,6 +135,15 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-4xl">
+        <div className="flex justify-end mb-6">
+          <Button
+            variant="outline"
+            onClick={() => router.push("/signup")}
+            className="border-primary text-primary hover:bg-primary hover:text-white"
+          >
+            Sign up
+          </Button>
+        </div>
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
             <img 

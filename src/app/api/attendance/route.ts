@@ -65,27 +65,113 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session || session.user.role !== "TEACHER") {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const body = await request.json()
     const data = createAttendanceSchema.parse(body)
 
-    const teacher = await prisma.teacher.findUnique({
-      where: { userId: session.user.id },
-    })
+    let teacherId: string
 
-    if (!teacher) {
-      return NextResponse.json({ error: "Teacher not found" }, { status: 404 })
+    if (session.user.role === "TEACHER") {
+      // Teacher marking attendance for a student
+      const teacher = await prisma.teacher.findUnique({
+        where: { userId: session.user.id },
+      })
+
+      if (!teacher) {
+        return NextResponse.json({ error: "Teacher not found" }, { status: 404 })
+      }
+
+      teacherId = teacher.id
+    } else if (session.user.role === "STUDENT") {
+      // Student marking their own attendance
+      const student = await prisma.student.findUnique({
+        where: { userId: session.user.id },
+        include: {
+          class: {
+            include: {
+              teachers: {
+                include: {
+                  teacher: true,
+                },
+                take: 1,
+              },
+            },
+          },
+        },
+      })
+
+      if (!student) {
+        return NextResponse.json({ error: "Student not found" }, { status: 404 })
+      }
+
+      // Verify student is marking their own attendance
+      if (data.studentId !== student.id) {
+        return NextResponse.json({ error: "You can only mark your own attendance" }, { status: 403 })
+      }
+
+      // Find a teacher from the student's class
+      if (student.class && student.class.teachers.length > 0) {
+        teacherId = student.class.teachers[0].teacher.id
+      } else {
+        // If no teacher assigned to class, find any teacher (fallback)
+        const anyTeacher = await prisma.teacher.findFirst()
+        if (!anyTeacher) {
+          return NextResponse.json({ error: "No teacher available to mark attendance" }, { status: 404 })
+        }
+        teacherId = anyTeacher.id
+      }
+    } else {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const attendanceDate = data.date ? new Date(data.date) : new Date()
+    const startOfDay = new Date(attendanceDate)
+    startOfDay.setHours(0, 0, 0, 0)
+    const endOfDay = new Date(attendanceDate)
+    endOfDay.setHours(23, 59, 59, 999)
+
+    // Check if attendance already exists for this date
+    const existingAttendance = await prisma.attendance.findFirst({
+      where: {
+        studentId: data.studentId,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    })
+
+    if (existingAttendance) {
+      // Update existing attendance
+      const updated = await prisma.attendance.update({
+        where: { id: existingAttendance.id },
+        data: {
+          status: data.status,
+          teacherId: teacherId,
+        },
+        include: {
+          student: {
+            include: {
+              user: true,
+            },
+          },
+          teacher: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      })
+      return NextResponse.json(updated, { status: 200 })
+    }
 
     const attendance = await prisma.attendance.create({
       data: {
         studentId: data.studentId,
-        teacherId: teacher.id,
+        teacherId: teacherId,
         status: data.status,
         date: attendanceDate,
       },

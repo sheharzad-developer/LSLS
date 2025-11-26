@@ -31,16 +31,22 @@ export default function LoginPage() {
     }
 
     try {
+      // Get the callback URL from query params or default to home
+      const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl") || "/"
+      
       const result = await signIn("credentials", {
         email: trimmedEmail,
         password,
         redirect: false,
+        callbackUrl: callbackUrl,
       })
 
       if (result?.error) {
         // Provide more specific error messages
         if (result.error === "CredentialsSignin") {
           setError("Invalid email or password. Please check your credentials and try again.")
+        } else if (result.error.includes("Database") || result.error.includes("connection")) {
+          setError("Database connection error. Please try again in a moment.")
         } else {
           setError(`Login failed: ${result.error}. Please try again or contact support.`)
         }
@@ -49,14 +55,17 @@ export default function LoginPage() {
       }
 
       if (result?.ok) {
-        // Get the callback URL from query params or default to home
-        const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl") || "/"
+        // Use the callback URL or default to home, then redirect to role-based dashboard
         router.push(callbackUrl)
         router.refresh()
+      } else {
+        setError("Login failed. Please try again.")
+        setLoading(false)
       }
     } catch (error) {
       console.error("Login error:", error)
-      setError("An error occurred. Please try again. If the problem persists, check your connection.")
+      const errorMessage = error instanceof Error ? error.message : "Unknown error"
+      setError(`An error occurred: ${errorMessage}. Please try again.`)
       setLoading(false)
     }
   }

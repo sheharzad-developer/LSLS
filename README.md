@@ -40,13 +40,20 @@ npm install
 ```
 
 3. **Set up environment variables**:
-   - Copy `.env.example` to `.env`
-   - Update the following variables:
+   - Create a `.env` file in the root directory
+   - Add the following variables:
 ```env
 DATABASE_URL="postgresql://user:password@localhost:5432/lsls?schema=public"
 NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="your-secret-key-here-change-in-production"
 ```
+
+   **For Vercel Deployment with Neon:**
+   - Sign up at [neon.tech](https://neon.tech)
+   - Create a new project
+   - Copy your connection string from the Neon dashboard
+   - In Vercel: Settings → Environment Variables → Add `DATABASE_URL` with your Neon connection string
+   - Make sure to add `?sslmode=require` or `?sslmode=prefer` to the connection string if not already included
 
 4. **Set up the database**:
 ```bash

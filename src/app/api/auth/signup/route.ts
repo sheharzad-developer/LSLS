@@ -124,7 +124,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Log the full error for debugging
     console.error("Signup error:", error)
+    
+    // Provide more detailed error messages
+    if (error instanceof Error) {
+      // Check for common database connection errors
+      if (error.message.includes("Can't reach database server") || 
+          error.message.includes("P1001") ||
+          error.message.includes("ENOENT") ||
+          error.message.includes("SQLITE")) {
+        return NextResponse.json(
+          { error: "Database connection failed. Please check your database configuration." },
+          { status: 500 }
+        )
+      }
+      
+      // Return the actual error message in development, generic in production
+      const errorMessage = process.env.NODE_ENV === "production" 
+        ? "Failed to create account. Please try again later."
+        : error.message || "Failed to create account"
+      
+      return NextResponse.json(
+        { error: errorMessage },
+        { status: 500 }
+      )
+    }
+
     return NextResponse.json(
       { error: "Failed to create account" },
       { status: 500 }

@@ -136,6 +136,16 @@ export default function LoginPage() {
               </Link>
             </div>
           </form>
+          
+          {/* Credential Hints */}
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-xs font-semibold text-blue-900 mb-2">Credential Hints:</p>
+            <ul className="text-xs text-blue-800 space-y-1">
+              <li>• Use your registered email address</li>
+              <li>• Password must be at least 6 characters</li>
+              <li>• Contact admin if you forgot your password</li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -88,6 +88,17 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  debug: true, // Enable debug mode to see errors in logs
+  logger: {
+    error(code, metadata) {
+      console.error("NextAuth error:", code, metadata)
+    },
+    warn(code) {
+      console.warn("NextAuth warning:", code)
+    },
+    debug(code, metadata) {
+      console.log("NextAuth debug:", code, metadata)
+    },
+  },
 }
 

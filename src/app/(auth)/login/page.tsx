@@ -41,8 +41,11 @@ export default function LoginPage() {
         callbackUrl: callbackUrl,
       })
 
+      console.log("Sign in result:", result)
+
       if (result?.error) {
         // Provide more specific error messages
+        console.error("Sign in error:", result.error)
         if (result.error === "CredentialsSignin") {
           setError("Invalid email or password. Please check your credentials and try again.")
         } else if (result.error.includes("Database") || result.error.includes("connection")) {

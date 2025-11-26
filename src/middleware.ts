@@ -12,10 +12,15 @@ export default withAuth(
     // Allow access to root page, login and signup pages and API auth routes
     if (isRootPage || isAuthPage || isApiAuth) {
       // If user is already logged in and tries to access root or auth pages, redirect to their dashboard
-      if ((isRootPage || isAuthPage) && token) {
-        return NextResponse.redirect(
-          new URL(`/${token.role?.toLowerCase() || "admin"}`, req.url)
-        )
+      // But only if they have a valid role
+      if ((isRootPage || isAuthPage) && token?.role) {
+        const role = token.role.toLowerCase()
+        // Prevent redirect loops by checking if we're already going to the right place
+        if (path !== `/${role}`) {
+          return NextResponse.redirect(
+            new URL(`/${role}`, req.url)
+          )
+        }
       }
       return NextResponse.next()
     }

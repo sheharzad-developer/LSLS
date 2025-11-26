@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { Card, CardContent } from "@/components/ui/card"
-import { Users, GraduationCap, BookOpen, Calendar, UserCircle } from "lucide-react"
+import { Users, GraduationCap, BookOpen, Calendar, UserCircle, Key } from "lucide-react"
 import Link from "next/link"
 
 export const dynamic = 'force-dynamic'
@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 export default async function AdminDashboard() {
   const session = await getServerSession(authOptions)
   
-  const [studentsCount, teachersCount, classesCount, attendanceCount, parentsCount] = await Promise.all([
+  const [studentsCount, teachersCount, classesCount, attendanceCount, parentsCount, usersCount] = await Promise.all([
     prisma.student.count(),
     prisma.teacher.count(),
     prisma.class.count(),
@@ -22,6 +22,7 @@ export default async function AdminDashboard() {
       }
     }),
     prisma.parent.count(),
+    prisma.user.count(),
   ])
 
   const navigationCards = [
@@ -64,6 +65,16 @@ export default async function AdminDashboard() {
       gradient: "from-orange-500 to-orange-600",
       iconBg: "bg-orange-100",
       iconColor: "text-orange-600",
+    },
+    {
+      title: "Credentials",
+      description: "Manage user credentials",
+      icon: Key,
+      href: "/admin/credentials",
+      count: usersCount,
+      gradient: "from-red-500 to-red-600",
+      iconBg: "bg-red-100",
+      iconColor: "text-red-600",
     },
   ]
 

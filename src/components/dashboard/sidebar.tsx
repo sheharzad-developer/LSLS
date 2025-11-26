@@ -16,6 +16,7 @@ import {
   Info,
   Menu,
   X,
+  Key,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -31,6 +32,7 @@ const adminLinks = [
   { href: "/admin/students", label: "Students", icon: Users },
   { href: "/admin/teachers", label: "Teachers", icon: GraduationCap },
   { href: "/admin/classes", label: "Classes", icon: BookOpen },
+  { href: "/admin/credentials", label: "Credentials", icon: Key },
   { href: "/about", label: "About", icon: Info },
 ]
 

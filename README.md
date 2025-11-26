@@ -55,6 +55,16 @@ NEXTAUTH_SECRET="your-secret-key-here-change-in-production"
    - In Vercel: Settings → Environment Variables → Add `DATABASE_URL` with your Neon connection string
    - Make sure to add `?sslmode=require` or `?sslmode=prefer` to the connection string if not already included
 
+   **For Netlify Deployment with Neon:**
+   - Sign up at [neon.tech](https://neon.tech)
+   - Create a new project
+   - Copy your connection string from the Neon dashboard
+   - In Netlify: Site settings → Environment variables → Add the following:
+     - `DATABASE_URL` = Your Neon connection string (with `?sslmode=require`)
+     - `NEXTAUTH_URL` = Your Netlify site URL (e.g., `https://your-site.netlify.app`)
+     - `NEXTAUTH_SECRET` = A secure random string
+   - The `netlify.toml` file is already configured for Next.js
+
 4. **Set up the database**:
 ```bash
 # Generate Prisma Client

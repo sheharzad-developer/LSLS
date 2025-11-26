@@ -50,6 +50,15 @@ export const authOptions: NextAuthOptions = {
           }
         } catch (error) {
           console.error("Auth error:", error)
+          // Check for database connection errors
+          if (error instanceof Error) {
+            if (error.message.includes("Can't reach database") || 
+                error.message.includes("P1001") ||
+                error.message.includes("connection")) {
+              console.error("Database connection failed. Check DATABASE_URL environment variable.")
+              throw new Error("Database connection failed. Please try again later.")
+            }
+          }
           // Re-throw to see the actual error in Vercel logs
           throw error
         }

@@ -38,7 +38,12 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError("Invalid email or password. Please check your credentials and try again.")
+        // Provide more specific error messages
+        if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password. Please check your credentials and try again.")
+        } else {
+          setError(`Login failed: ${result.error}. Please try again or contact support.`)
+        }
         setLoading(false)
         return
       }
@@ -50,7 +55,8 @@ export default function LoginPage() {
         router.refresh()
       }
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      console.error("Login error:", error)
+      setError("An error occurred. Please try again. If the problem persists, check your connection.")
       setLoading(false)
     }
   }

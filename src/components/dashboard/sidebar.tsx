@@ -116,7 +116,10 @@ export function Sidebar({ role, userName }: SidebarProps) {
         <Button
           variant="ghost"
           className="w-full justify-start"
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => {
+            const origin = typeof window !== 'undefined' ? window.location.origin : ''
+            signOut({ callbackUrl: `${origin}/login` })
+          }}
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out

@@ -95,28 +95,28 @@ export default async function AdminDashboard() {
   ]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div className="space-y-2">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           Admin Dashboard
         </h1>
-        <p className="text-lg text-gray-600">Welcome back, {session?.user.name}</p>
+        <p className="text-base sm:text-lg text-gray-600">Welcome back, {session?.user.name}</p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon
           return (
             <Card key={stat.title} className="border-2 hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                    <p className="text-3xl font-bold">{stat.value}</p>
+                    <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                    <p className="text-2xl sm:text-3xl font-bold">{stat.value}</p>
                   </div>
-                  <div className={`p-3 rounded-full bg-gray-100`}>
-                    <Icon className={`h-6 w-6 ${stat.color}`} />
+                  <div className={`p-2 sm:p-3 rounded-full bg-gray-100`}>
+                    <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${stat.color}`} />
                   </div>
                 </div>
               </CardContent>
@@ -127,24 +127,24 @@ export default async function AdminDashboard() {
 
       {/* Navigation Cards */}
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Quick Navigation</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4">Quick Navigation</h2>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {navigationCards.map((card) => {
             const Icon = card.icon
             return (
               <Link key={card.title} href={card.href}>
                 <Card className="group cursor-pointer border-2 hover:border-primary/50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                  <CardContent className="p-6">
-                    <div className={`w-16 h-16 ${card.iconBg} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                      <Icon className={`h-8 w-8 ${card.iconColor}`} />
+                  <CardContent className="p-4 sm:p-6">
+                    <div className={`w-12 h-12 sm:w-16 sm:h-16 ${card.iconBg} rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform`}>
+                      <Icon className={`h-6 w-6 sm:h-8 sm:w-8 ${card.iconColor}`} />
                     </div>
-                    <h3 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1 group-hover:text-primary transition-colors">
                       {card.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3">{card.description}</p>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">{card.description}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-gray-800">{card.count}</span>
-                      <span className="text-sm text-gray-500 group-hover:text-primary transition-colors">
+                      <span className="text-xl sm:text-2xl font-bold text-gray-800">{card.count}</span>
+                      <span className="text-xs sm:text-sm text-gray-500 group-hover:text-primary transition-colors">
                         View →
                       </span>
                     </div>

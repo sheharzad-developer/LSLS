@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { signOut } from "next-auth/react"
@@ -13,6 +14,8 @@ import {
   LogOut,
   UserCircle,
   Info,
+  Menu,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -58,6 +61,7 @@ const parentLinks = [
 export function Sidebar({ role, userName }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const getLinks = () => {
     switch (role) {
@@ -77,7 +81,31 @@ export function Sidebar({ role, userName }: SidebarProps) {
   const links = getLinks()
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-gray-50">
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-primary text-primary-foreground shadow-lg"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={cn(
+          "fixed lg:static inset-y-0 left-0 z-40 flex h-screen w-64 flex-col border-r bg-gray-50 transform transition-transform duration-300 ease-in-out",
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+      >
       <div className="flex h-16 items-center gap-3 border-b px-6">
         <img 
           src="/logo/images.jpeg" 
@@ -99,6 +127,7 @@ export function Sidebar({ role, userName }: SidebarProps) {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
@@ -128,6 +157,7 @@ export function Sidebar({ role, userName }: SidebarProps) {
         </Button>
       </div>
     </div>
+    </>
   )
 }
 

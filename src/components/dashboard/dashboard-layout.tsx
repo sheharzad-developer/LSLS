@@ -21,7 +21,7 @@ export default async function DashboardLayout({
       <Sidebar role={session.user.role} userName={session.user.name} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Navbar />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
+        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6">
           {children}
         </main>
         <Footer />

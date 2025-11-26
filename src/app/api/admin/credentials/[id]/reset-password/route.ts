@@ -11,7 +11,7 @@ const resetPasswordSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check if user is authenticated and is admin
@@ -31,12 +31,13 @@ export async function POST(
       )
     }
 
+    const { id } = await params
     const body = await request.json()
     const data = resetPasswordSchema.parse(body)
 
     // Check if user exists
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!user) {
@@ -51,7 +52,7 @@ export async function POST(
 
     // Update user password
     await prisma.user.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         password: hashedPassword,
       },

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { signOut } from "next-auth/react"
 import {
   LayoutDashboard,
@@ -57,6 +57,7 @@ const parentLinks = [
 
 export function Sidebar({ role, userName }: SidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
 
   const getLinks = () => {
     switch (role) {
@@ -116,7 +117,11 @@ export function Sidebar({ role, userName }: SidebarProps) {
         <Button
           variant="ghost"
           className="w-full justify-start"
-          onClick={() => signOut({ redirect: true, callbackUrl: "/login" })}
+          onClick={async () => {
+            await signOut({ redirect: false })
+            router.push("/login")
+            router.refresh()
+          }}
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out

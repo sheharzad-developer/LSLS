@@ -12,3 +12,10 @@ export const prisma =
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
+// Test database connection on startup in production
+if (process.env.NODE_ENV === 'production') {
+  prisma.$connect().catch((error) => {
+    console.error('Failed to connect to database:', error)
+  })
+}
+

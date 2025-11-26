@@ -17,33 +17,41 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // Trim and lowercase email for consistent lookup
-        const email = credentials.email.trim().toLowerCase()
+        try {
+          // Trim and lowercase email for consistent lookup
+          const email = credentials.email.trim().toLowerCase()
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: email,
-          },
-        })
+          const user = await prisma.user.findUnique({
+            where: {
+              email: email,
+            },
+          })
 
-        if (!user) {
-          return null
-        }
+          if (!user) {
+            console.error("User not found:", email)
+            return null
+          }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          )
 
-        if (!isPasswordValid) {
-          return null
-        }
+          if (!isPasswordValid) {
+            console.error("Invalid password for user:", email)
+            return null
+          }
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role as Role,
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role as Role,
+          }
+        } catch (error) {
+          console.error("Auth error:", error)
+          // Re-throw to see the actual error in Vercel logs
+          throw error
         }
       },
     }),
